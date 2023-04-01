@@ -37,6 +37,10 @@ namespace CvAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(Vm_Create_Education model)
         {
+            if(ModelState.IsValid)
+            {
+
+            }
             await _educationWriteRepository.AddAsync(new()
             {
                 Title = model.Title,

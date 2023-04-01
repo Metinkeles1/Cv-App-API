@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\CvAPI.Application\CvAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\CvAPI.Infrastructure\CvAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\CvAPI.Persistence\CvAPI.Persistence.csproj" />
   </ItemGroup>
 
