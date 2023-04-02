@@ -1,5 +1,6 @@
 ﻿
 using CvAPI.Application.Repositories;
+using CvAPI.Application.RequestParameters;
 using CvAPI.Application.ViewModels.Educations;
 using CvAPI.Domain.Entities;
 using CvAPI.Persistence.Repositories;
@@ -23,9 +24,25 @@ namespace CvAPI.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery]Pagination pagination)
         {
-            return Ok(_educationReadRepository.GetAll(false));
+            var totalCount = _educationReadRepository.GetAll(false).Count();
+            var educations = _educationReadRepository.GetAll(false).Select(p => new
+            {
+                p.Id,
+                p.Title,
+                p.SubTitle,
+                p.SubTitle2,
+                p.GPA,
+                p.Date,
+                p.CreatedDate,
+                p.UpdatedDate
+            }).Skip(pagination.Page * pagination.Size).Take(pagination.Size);
+            return Ok(new
+            {
+                totalCount,
+                educations
+            });
         }
 
         [HttpGet("{id}")]
@@ -36,11 +53,7 @@ namespace CvAPI.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Post(Vm_Create_Education model)
-        {
-            if(ModelState.IsValid)
-            {
-
-            }
+        {          
             await _educationWriteRepository.AddAsync(new()
             {
                 Title = model.Title,
