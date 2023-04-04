@@ -27,7 +27,7 @@ namespace CvAPI.API.Controllers
         public async Task<IActionResult> Get([FromQuery]Pagination pagination)
         {
             var totalCount = _educationReadRepository.GetAll(false).Count();
-            var educations = _educationReadRepository.GetAll(false).Select(p => new
+            var educations = _educationReadRepository.GetAll(false).Skip(pagination.Page * pagination.Size).Take(pagination.Size).Select(p => new
             {
                 p.Id,
                 p.Title,
@@ -37,7 +37,7 @@ namespace CvAPI.API.Controllers
                 p.Date,
                 p.CreatedDate,
                 p.UpdatedDate
-            }).Skip(pagination.Page * pagination.Size).Take(pagination.Size);
+            });
             return Ok(new
             {
                 totalCount,
