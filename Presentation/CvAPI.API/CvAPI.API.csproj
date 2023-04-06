@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\Infrastructure\CvAPI.Persistence\CvAPI.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>
