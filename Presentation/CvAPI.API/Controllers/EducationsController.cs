@@ -1,6 +1,7 @@
 ﻿
 using CvAPI.Application.Repositories;
 using CvAPI.Application.RequestParameters;
+using CvAPI.Application.Services;
 using CvAPI.Application.ViewModels.Educations;
 using CvAPI.Domain.Entities;
 using CvAPI.Persistence.Repositories;
@@ -16,15 +17,18 @@ namespace CvAPI.API.Controllers
         private readonly IEducationReadRepository _educationReadRepository;
         private readonly IEducationWriteRepository _educationWriteRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
 
         public EducationsController(
             IEducationReadRepository educationReadRepository,
             IEducationWriteRepository educationWriteRepository,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IFileService fileService)
         {
             _educationReadRepository = educationReadRepository;
             _educationWriteRepository = educationWriteRepository;
             _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
         }
 
         [HttpGet]
@@ -93,29 +97,7 @@ namespace CvAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/education-images");
-
-            if (!Directory.Exists(uploadPath))
-                Directory.CreateDirectory(uploadPath);
-
-            Random r = new();
-
-            foreach(IFormFile file in Request.Form.Files)
-            {
-                Guid guid = Guid.NewGuid();
-                string noExtension = Path.GetFileNameWithoutExtension(file.FileName).ToLower()
-                    .Replace(" ", "-").Replace("ğ", "g").Replace("ı", "i").Replace("ö", "o")
-                    .Replace("ü", "u").Replace("ş", "s").Replace("ç", "c").Replace("Ç", "c")
-                    .Replace("Ş", "s").Replace("Ğ", "g").Replace("Ü", "u").Replace("İ", "i")
-                    .Replace("Ö", "o").Trim();
-
-
-                string fullPath = Path.Combine(uploadPath, $"{noExtension + "-"}{guid}{Path.GetExtension(file.FileName)}");
-
-                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                await file.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-            }
+            _fileService.UploadAsync("resource/education-images", Request.Form.Files);
             return Ok();
         }
     }
