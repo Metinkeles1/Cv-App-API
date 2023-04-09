@@ -1,4 +1,6 @@
 ﻿using CvAPI.Application.Services;
+using CvAPI.Infrastructure.StaticServices;
+using ICSharpCode.SharpZipLib.Core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -24,7 +26,7 @@ namespace CvAPI.Infrastructure.Services
             {
                 await using FileStream fileStream = new(path, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
 
-                await fileStream.CopyToAsync(fileStream);
+                await file.CopyToAsync(fileStream);
                 await fileStream.FlushAsync();
                 return true;
             }
@@ -35,9 +37,14 @@ namespace CvAPI.Infrastructure.Services
             }
         }
 
-        public Task<string> FileRenamAsync(string fileName)
+        async Task<string> FileRenameAsync(string path, string fileName, bool first = true)
         {
-            throw new NotImplementedException();
+            string path2 = path;
+            DateTime aDate = DateTime.Now;
+            string name = Path.GetFileNameWithoutExtension(fileName);
+            string newFileName = NameOperation.CharacterRegulatory(name) + "-" + aDate.ToString("ddMMyyyyHHmmsss") + Path.GetExtension(fileName);
+            return newFileName;
+
         }
 
         public async Task<List<(string fileName, string path)>> UploadAsync(string path, IFormFileCollection files)
@@ -50,7 +57,7 @@ namespace CvAPI.Infrastructure.Services
             List<bool> results = new();
 
             foreach(IFormFile file in files) {
-                string fileNewName = await FileRenamAsync(file.FileName);
+                string fileNewName = await FileRenameAsync(uploadPath,file.FileName);
 
                 bool result = await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
                 datas.Add((fileNewName, $"{uploadPath}\\{fileNewName}"));
