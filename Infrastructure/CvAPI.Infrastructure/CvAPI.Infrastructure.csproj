@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
     <PackageReference Include="IKVM" Version="8.4.5" />
   </ItemGroup>
 
@@ -15,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Storage\Azure\" />
     <Folder Include="Services\Storage\AWS\" />
   </ItemGroup>
 

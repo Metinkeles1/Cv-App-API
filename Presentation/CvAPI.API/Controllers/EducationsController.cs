@@ -115,7 +115,7 @@ namespace CvAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            var datas = await _storageService.UploadAsync("resource/files", Request.Form.Files);
+            var datas = await _storageService.UploadAsync("files", Request.Form.Files);
 
             await _aboutMeImageFileWriteRepository.AddRangeAsync(datas.Select(d => new AboutmeImageFile()
             {
