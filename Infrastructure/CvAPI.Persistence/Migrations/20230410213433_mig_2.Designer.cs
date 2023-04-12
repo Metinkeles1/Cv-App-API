@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CvAPI.Persistence.Migrations
 {
     [DbContext(typeof(CvAPIDbContext))]
-    [Migration("20230307063053_mig_2")]
+    [Migration("20230410213433_mig_2")]
     partial class mig_2
     {
         /// <inheritdoc />
@@ -95,6 +95,28 @@ namespace CvAPI.Persistence.Migrations
                     b.ToTable("Experiences");
                 });
 
+            modelBuilder.Entity("CvAPI.Domain.Entities.File", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Files");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("File");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("CvAPI.Domain.Entities.Skill", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,6 +139,20 @@ namespace CvAPI.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("CvAPI.Domain.Entities.AboutmeImageFile", b =>
+                {
+                    b.HasBaseType("CvAPI.Domain.Entities.File");
+
+                    b.HasDiscriminator().HasValue("AboutmeImageFile");
+                });
+
+            modelBuilder.Entity("CvAPI.Domain.Entities.EducationImageFile", b =>
+                {
+                    b.HasBaseType("CvAPI.Domain.Entities.File");
+
+                    b.HasDiscriminator().HasValue("EducationImageFile");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,6 +18,9 @@ namespace CvAPI.Persistence.Contexts
         public DbSet<Education> Educations{ get; set; }
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<Skill> Skills { get; set; }
+        public DbSet<Domain.Entities.File> Files { get; set; }
+        public DbSet<EducationImageFile> EducationImageFiles{ get; set; }
+        public DbSet<AboutmeImageFile> AboutmeImageFiles { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

@@ -23,6 +23,12 @@ namespace CvAPI.Persistence
             services.AddScoped<IExperienceWriteRepository, ExperienceWriteRepository>();
             services.AddScoped<ISkillReadRepository, SkillReadRepository>();
             services.AddScoped<ISkillWriteRepository, SkillWriteRepository>();
+            services.AddScoped<IFileReadRepository, FileReadRepository>();
+            services.AddScoped<IFileWriteRepository, FileWriteRepository>();
+            services.AddScoped<IEducationImageReadRepository, EducationImageFileReadRepository>();
+            services.AddScoped<IEducationImageWriteRepository, EducationImageFileWriteRepository>();
+            services.AddScoped<IAboutMeImageFileReadRepository, AboutMeImageFileReadRepository>();
+            services.AddScoped<IAboutMeImageFileWriteRepository, AboutMeImageFileWriteRepository>();
         }
     }
 }
