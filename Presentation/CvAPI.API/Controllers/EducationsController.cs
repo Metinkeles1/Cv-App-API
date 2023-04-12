@@ -1,7 +1,7 @@
 ﻿
+using CvAPI.Application.Abstractions.Storage;
 using CvAPI.Application.Repositories;
 using CvAPI.Application.RequestParameters;
-using CvAPI.Application.Services;
 using CvAPI.Application.ViewModels.Educations;
 using CvAPI.Domain.Entities;
 using CvAPI.Persistence.Repositories;
@@ -17,36 +17,36 @@ namespace CvAPI.API.Controllers
         private readonly IEducationReadRepository _educationReadRepository;
         private readonly IEducationWriteRepository _educationWriteRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IFileService _fileService;
         readonly IFileWriteRepository _fileWriteRepository;
         readonly IFileReadRepository _fileReadRepository;
         readonly IEducationImageWriteRepository _educationImageWriteRepository;
         readonly IEducationImageReadRepository _educationImageReadRepository;
         readonly IAboutMeImageFileWriteRepository _aboutMeImageFileWriteRepository;
         readonly IAboutMeImageFileReadRepository _aboutMeImageFileReadRepository;
+        readonly IStorageService _storageService;
 
         public EducationsController(
             IEducationReadRepository educationReadRepository,
             IEducationWriteRepository educationWriteRepository,
             IWebHostEnvironment webHostEnvironment,
-            IFileService fileService,
             IFileWriteRepository fileWriteRepository,
             IFileReadRepository fileReadRepository,
             IEducationImageWriteRepository educationImageWriteRepository,
             IEducationImageReadRepository educationImageReadRepository,
             IAboutMeImageFileWriteRepository aboutMeImageFileWriteRepository,
-            IAboutMeImageFileReadRepository aboutMeImageFileReadRepository)
+            IAboutMeImageFileReadRepository aboutMeImageFileReadRepository,
+            IStorageService storageService)
         {
             _educationReadRepository = educationReadRepository;
             _educationWriteRepository = educationWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-            _fileService = fileService;
             _fileWriteRepository = fileWriteRepository;
             _fileReadRepository = fileReadRepository;
             _educationImageWriteRepository = educationImageWriteRepository;
             _educationImageReadRepository = educationImageReadRepository;
             _aboutMeImageFileWriteRepository = aboutMeImageFileWriteRepository;
             _aboutMeImageFileReadRepository = aboutMeImageFileReadRepository;
+            _storageService = storageService;
         }
 
         [HttpGet]
@@ -115,14 +115,25 @@ namespace CvAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            var datas = await _fileService.UploadAsync("resource/files", Request.Form.Files);
-            await _fileWriteRepository.AddRangeAsync(datas.Select(d => new CvAPI.Domain.Entities.File()
+            var datas = await _storageService.UploadAsync("resource/files", Request.Form.Files);
+
+            await _aboutMeImageFileWriteRepository.AddRangeAsync(datas.Select(d => new AboutmeImageFile()
             {
                 FileName = d.fileName,
-                Path = d.path
+                Path = d.pathOrContainerName,
+                Storage = _storageService.StorageName
+
             }).ToList());
-            await _fileWriteRepository.SaveAsync();
-            return Ok();
+            await _aboutMeImageFileWriteRepository.SaveAsync();
+
+            //var datas = await _fileService.UploadAsync("resource/files", Request.Form.Files);
+            //await _fileWriteRepository.AddRangeAsync(datas.Select(d => new CvAPI.Domain.Entities.File()
+            //{
+            //    FileName = d.fileName,
+            //    Path = d.path
+            //}).ToList());
+            //await _fileWriteRepository.SaveAsync();
+            //return Ok();
 
             //var datas = await _fileService.UploadAsync("resource/files", Request.Form.Files);
             //await _aboutMeImageFileWriteRepository.AddRangeAsync(datas.Select(d => new AboutmeImageFile()
@@ -145,7 +156,8 @@ namespace CvAPI.API.Controllers
 
             //var d1 = _fileReadRepository.GetAll(false);
             //var d2 = _aboutMeImageFileReadRepository.GetAll(false);
-            //var d3 = _educationImageReadRepository.GetAll(false);            
+            //var d3 = _educationImageReadRepository.GetAll(false);
+            return Ok();
         }
     }
 }
