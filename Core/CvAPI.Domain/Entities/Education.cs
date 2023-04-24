@@ -14,5 +14,6 @@ namespace CvAPI.Domain.Entities
         public string SubTitle2 { get; set; }
         public string GPA { get; set; }
         public string Date { get; set; }
+        public ICollection<EducationImageFile> EducationImageFiles { get; set; }
     }
 }

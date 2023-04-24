@@ -113,8 +113,35 @@ namespace CvAPI.API.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string id)
         {
+            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", Request.Form.Files);
+
+            Education education =  await _educationReadRepository.GetByIdAsync(id);
+
+            //foreach (var r in result)
+            //{
+            //    education.EducationImageFiles.Add(new()
+            //    {
+            //        FileName = r.fileName,
+            //        Path = r.pathOrContainerName,
+            //        Storage = _storageService.StorageName,
+            //        Educations = new List<Education>() { education }
+            //    });
+            //}
+
+            //await _educationImageWriteRepository.AddRangeAsync(result.Select(r => new EducationImageFile
+            //{
+            //    FileName = r.fileName,
+            //    Path = r.pathOrContainerName,
+            //    Storage = _storageService.StorageName,
+            //    Educations = new List<Education>() { education }
+            //}).ToList());
+
+            //await _educationImageWriteRepository.SaveAsync();
+
+            //return Ok();
+
             var datas = await _storageService.UploadAsync("files", Request.Form.Files);
 
             await _aboutMeImageFileWriteRepository.AddRangeAsync(datas.Select(d => new AboutmeImageFile()
@@ -125,6 +152,7 @@ namespace CvAPI.API.Controllers
 
             }).ToList());
             await _aboutMeImageFileWriteRepository.SaveAsync();
+            return Ok();
 
             //var datas = await _fileService.UploadAsync("resource/files", Request.Form.Files);
             //await _fileWriteRepository.AddRangeAsync(datas.Select(d => new CvAPI.Domain.Entities.File()
@@ -156,8 +184,7 @@ namespace CvAPI.API.Controllers
 
             //var d1 = _fileReadRepository.GetAll(false);
             //var d2 = _aboutMeImageFileReadRepository.GetAll(false);
-            //var d3 = _educationImageReadRepository.GetAll(false);
-            return Ok();
+            //var d3 = _educationImageReadRepository.GetAll(false);            
         }
     }
 }

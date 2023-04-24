@@ -4,6 +4,7 @@ using CvAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CvAPI.Persistence.Migrations
 {
     [DbContext(typeof(CvAPIDbContext))]
-    partial class CvAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230419093814_mig_5")]
+    partial class mig_5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,21 +153,6 @@ namespace CvAPI.Persistence.Migrations
                     b.ToTable("Skills");
                 });
 
-            modelBuilder.Entity("EducationEducationImageFile", b =>
-                {
-                    b.Property<Guid>("EducationImageFilesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EducationsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("EducationImageFilesId", "EducationsId");
-
-                    b.HasIndex("EducationsId");
-
-                    b.ToTable("EducationEducationImageFile");
-                });
-
             modelBuilder.Entity("CvAPI.Domain.Entities.AboutmeImageFile", b =>
                 {
                     b.HasBaseType("CvAPI.Domain.Entities.File");
@@ -176,22 +164,28 @@ namespace CvAPI.Persistence.Migrations
                 {
                     b.HasBaseType("CvAPI.Domain.Entities.File");
 
+                    b.Property<Guid>("EducationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("EducationId");
+
                     b.HasDiscriminator().HasValue("EducationImageFile");
                 });
 
-            modelBuilder.Entity("EducationEducationImageFile", b =>
+            modelBuilder.Entity("CvAPI.Domain.Entities.EducationImageFile", b =>
                 {
-                    b.HasOne("CvAPI.Domain.Entities.EducationImageFile", null)
-                        .WithMany()
-                        .HasForeignKey("EducationImageFilesId")
+                    b.HasOne("CvAPI.Domain.Entities.Education", "Education")
+                        .WithMany("EducationImageFiles")
+                        .HasForeignKey("EducationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CvAPI.Domain.Entities.Education", null)
-                        .WithMany()
-                        .HasForeignKey("EducationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Education");
+                });
+
+            modelBuilder.Entity("CvAPI.Domain.Entities.Education", b =>
+                {
+                    b.Navigation("EducationImageFiles");
                 });
 #pragma warning restore 612, 618
         }

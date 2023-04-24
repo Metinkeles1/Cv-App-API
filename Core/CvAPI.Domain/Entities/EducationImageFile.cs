@@ -8,6 +8,6 @@ namespace CvAPI.Domain.Entities
 {
     public class EducationImageFile : File
     {
-        public string SchollImage { get; set; }
+        public ICollection<Education> Educations { get; set; }
     }
 }
